@@ -14,6 +14,8 @@ SCREEN_HEIGHT = 700
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("test")
 
+scale = 3
+
 # lumikola settings
 kola_width = 10
 kola_height = 10
@@ -36,18 +38,15 @@ font = pygame.font.SysFont(None, 24)
 button_rect = pygame.Rect(SCREEN_WIDTH // 2 - 50, SCREEN_HEIGHT - 60, 100, 40)
 prev_pos = []
 
-scale = 3
-x_offset = 10
-y_offset = 10
 
 areas = [
-    Area(40 * scale, 30 * scale, 10 * scale, (100 * scale, 10 * scale)),
-    Area(60 * scale, 50 * scale, 10 * scale, (80 * scale, 50 * scale)),
-    Area(40 * scale, 20 * scale, 10 * scale, (80 * scale, 110 * scale)),
-    Area(20 * scale, 20 * scale, 10 * scale, (80 * scale, 150 * scale)),
-    Area(20 * scale, 40 * scale, 10 * scale, (40 * scale, 150 * scale)),
-    Area(10 * scale, 20 * scale, 10 * scale, (20 * scale, 160 * scale)),
-    Area(30 * scale, 20 * scale, 10 * scale, (40 * scale, 170 * scale)),
+    Area(40, 30, 10, (100, 10)),
+    Area(60, 50, 10, (80, 50)),
+    Area(40, 15, 10, (80, 110)),
+    Area(20, 20, 10, (80, 150)),
+    Area(20, 40, 10, (40, 150)),
+    Area(15, 20, 10, (20, 160)),
+    Area(30, 20, 10, (40, 170)),
 ]
 
 snow_sectors = [SnowSector((10, 10), 100, "RED")]
@@ -58,26 +57,60 @@ def draw_areas():
         pygame.draw.rect(
             screen,
             LIGHT_GRAY,
-            (*area.coords, area.width, area.height),
+            (
+                area.coords[0] * scale,
+                area.coords[1] * scale,
+                area.width * scale,
+                area.height * scale,
+            ),
         )
 
 
 def draw_snow_sectors():
     for sector in snow_sectors:
-        pygame.draw.circle(screen, sector.color, sector.coords, 1 * scale)
+        pygame.draw.circle(
+            screen,
+            sector.color,
+            (
+                sector.coords[0] * scale,
+                sector.coords[1] * scale,
+            ),
+            scale,
+        )
 
 
 def split_to_sectors():
-    for area in areas[0:2]:
-        for i in range(0, math.ceil(area.width / kola_width)):
-            for j in range(0, math.ceil(area.height / kola_height)):
+    for area in areas:
+        for i in range(0, math.floor(area.width / kola_width)):
+            for j in range(0, math.floor(area.height / kola_height)):
                 snow_sector = SnowSector(
                     (
-                        area.coords[0] + x_offset * (i + 1),
-                        area.coords[1] + y_offset * (j + 1),
+                        area.coords[0] - kola_width // 2 + kola_width * (i + 1),
+                        area.coords[1] - kola_height // 2 + kola_height * (j + 1),
                     ),
                     area.height * area.width * area.snow_depth,
-                    "BLUE",
+                    "GREEN",
+                )
+                snow_sectors.append(snow_sector)
+            if area.height - (j + 1) * kola_height > 0:
+                snow_sector = SnowSector(
+                    (
+                        area.coords[0] - kola_width // 2 + kola_width * (i + 1),
+                        area.coords[1] - kola_height // 2 + kola_height * (j + 2),
+                    ),
+                    area.height * area.width * area.snow_depth,
+                    "RED",
+                )
+                snow_sectors.append(snow_sector)
+        if area.width - (i + 1) * kola_width > 0:
+            for j in range(0, math.floor(area.height / kola_height)):
+                snow_sector = SnowSector(
+                    (
+                        area.coords[0] - kola_width // 2 + kola_width * (i + 2),
+                        area.coords[1] - kola_height // 2 + kola_height * (j + 1),
+                    ),
+                    area.height * area.width * area.snow_depth,
+                    "RED",
                 )
                 snow_sectors.append(snow_sector)
 

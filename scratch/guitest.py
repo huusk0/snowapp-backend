@@ -4,6 +4,7 @@ import math
 import copy
 from areatest import Area
 from snowSector import SnowSector
+from testAreaMaps import areas_1
 
 pygame.init()
 
@@ -37,17 +38,9 @@ font = pygame.font.SysFont(None, 24)
 # Button setup
 button_rect = pygame.Rect(SCREEN_WIDTH // 2 - 50, SCREEN_HEIGHT - 60, 100, 40)
 prev_pos = []
+show_sectors = True
 
-
-areas = [
-    Area(40, 30, 10, (100, 10)),
-    Area(60, 50, 10, (80, 50)),
-    Area(40, 15, 10, (80, 110)),
-    Area(20, 20, 10, (80, 150)),
-    Area(20, 40, 10, (40, 150)),
-    Area(15, 20, 10, (20, 160)),
-    Area(30, 20, 10, (40, 170)),
-]
+areas = areas_1
 
 snow_sectors = [SnowSector((10, 10), 100, "RED")]
 
@@ -116,16 +109,12 @@ def split_to_sectors():
 
 
 def main():
+    global show_sectors
     clock = pygame.time.Clock()
     running = True
 
-    screen.fill(DARK_GRAY)
-    pygame.draw.rect(screen, BLUE, button_rect)
-    text = font.render("split", True, WHITE)
-    screen.blit(text, (button_rect.x + 25, button_rect.y + 10))
     split_to_sectors()
-    draw_areas()
-    draw_snow_sectors()
+
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -133,8 +122,16 @@ def main():
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if button_rect.collidepoint(event.pos):
-                    print("hello from button")
+                    show_sectors = not show_sectors
+                    print("show:", show_sectors)
 
+        screen.fill(DARK_GRAY)
+        pygame.draw.rect(screen, BLUE, button_rect)
+        text = font.render("split", True, WHITE)
+        screen.blit(text, (button_rect.x + 25, button_rect.y + 10))
+        draw_areas()
+        if show_sectors:
+            draw_snow_sectors()
         pygame.display.flip()
         clock.tick(60)
 

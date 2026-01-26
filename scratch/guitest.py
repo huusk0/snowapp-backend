@@ -6,6 +6,8 @@ from areatest import Area
 from snowSector import SnowSector
 from testAreaMaps import areas_1, areas_2, areas_basic
 
+from collections import defaultdict
+
 pygame.init()
 
 # Screen setup
@@ -149,12 +151,54 @@ def sort_by_nearest(sectors, start=None):
     return ordered
 
 
+def draw_edges(edges_list):
+    for edge in edges_list:
+        pygame.draw.line(
+            screen,
+            BLACK,
+            (edge[0][0] * scale, edge[0][1] * scale),
+            (edge[1][0] * scale, edge[1][1] * scale),
+        )
+
+
+def generate_edges():
+    cols = defaultdict(list)
+    rows = defaultdict(list)
+
+    for sector in snow_sectors:
+        x = sector.coords[0]
+        y = sector.coords[1]
+        cols[x].append(y)
+        rows[y].append(x)
+
+    for x in cols:
+        cols[x].sort()  # sort y's in the same column
+    for y in rows:
+        rows[y].sort()  # sort x's in the same row
+
+    edges = []
+
+    # Connect along columns
+    for x, y_list in cols.items():
+        for i in range(len(y_list) - 1):
+            if y_list[i + 1] - y_list[i] <= kola_width:
+                edges.append(((x, y_list[i]), (x, y_list[i + 1])))
+
+    # Connect along rows
+    for y, x_list in rows.items():
+        for i in range(len(x_list) - 1):
+            if x_list[i + 1] - x_list[i] <= kola_height:
+                edges.append(((x_list[i], y), (x_list[i + 1], y)))
+    return edges
+
+
 def main():
     global snow_sectors
     clock = pygame.time.Clock()
     running = True
 
     split_to_sectors()
+    edges = generate_edges()
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -170,7 +214,8 @@ def main():
         screen.blit(text, (button_rect.x + 25, button_rect.y + 10))
         draw_areas()
         draw_snow_sectors()
-        draw_lines()
+        # draw_lines()
+        draw_edges(edges)
 
         pygame.display.flip()
         clock.tick(60)

@@ -3,3 +3,6 @@ class SnowSector:
         self.coords = coords
         self.snow_load = snow_load
         self.color = color
+
+    def __repr__(self):
+        return f"Snow sector at: {self.coords}"

@@ -4,7 +4,7 @@ import math
 import copy
 from areatest import Area
 from snowSector import SnowSector
-from testAreaMaps import areas_1
+from testAreaMaps import areas_1, areas_2, areas_basic
 
 pygame.init()
 
@@ -40,9 +40,9 @@ button_rect = pygame.Rect(SCREEN_WIDTH // 2 - 50, SCREEN_HEIGHT - 60, 100, 40)
 prev_pos = []
 show_sectors = True
 
-areas = areas_1
+areas = areas_2
 
-snow_sectors = [SnowSector((10, 10), 100, "RED")]
+snow_sectors = []
 
 
 def draw_areas():
@@ -108,13 +108,53 @@ def split_to_sectors():
                 snow_sectors.append(snow_sector)
 
 
+def draw_lines():
+    for i in range(0, len(snow_sectors) - 1):
+        pygame.draw.line(
+            screen,
+            WHITE,
+            (snow_sectors[i].coords[0] * scale, snow_sectors[i].coords[1] * scale),
+            (
+                snow_sectors[i + 1].coords[0] * scale,
+                snow_sectors[i + 1].coords[1] * scale,
+            ),
+        )
+
+
+def distance(a, b):
+    return math.hypot(a[0] - b[0], a[1] - b[1])
+
+
+def sort_by_nearest(sectors, start=None):
+    if not sectors:
+        return []
+
+    remaining = sectors[:]
+
+    # Choose starting point
+    if start is None:
+        current = remaining.pop(0)
+    else:
+        current = min(remaining, key=lambda s: distance(s.coords, start))
+        remaining.remove(current)
+
+    ordered = [current]
+
+    while remaining:
+        next_sector = min(remaining, key=lambda s: distance(s.coords, current.coords))
+        remaining.remove(next_sector)
+        ordered.append(next_sector)
+        current = next_sector
+
+    return ordered
+
+
 def main():
-    global show_sectors
+    global snow_sectors
     clock = pygame.time.Clock()
     running = True
 
     split_to_sectors()
-
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -122,16 +162,16 @@ def main():
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if button_rect.collidepoint(event.pos):
-                    show_sectors = not show_sectors
-                    print("show:", show_sectors)
+                    snow_sectors = sort_by_nearest(snow_sectors)
 
         screen.fill(DARK_GRAY)
         pygame.draw.rect(screen, BLUE, button_rect)
         text = font.render("split", True, WHITE)
         screen.blit(text, (button_rect.x + 25, button_rect.y + 10))
         draw_areas()
-        if show_sectors:
-            draw_snow_sectors()
+        draw_snow_sectors()
+        draw_lines()
+
         pygame.display.flip()
         clock.tick(60)
 

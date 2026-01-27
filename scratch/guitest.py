@@ -4,9 +4,9 @@ import math
 import copy
 from areatest import Area
 from snowSector import SnowSector
-from testAreaMaps import areas_1, areas_2, areas_basic
-
+from testAreaMaps import areas_1, areas_2, areas_basic, areas_overlay
 from collections import defaultdict
+import networkx as nx
 
 pygame.init()
 
@@ -42,7 +42,10 @@ button_rect = pygame.Rect(SCREEN_WIDTH // 2 - 50, SCREEN_HEIGHT - 60, 100, 40)
 prev_pos = []
 show_sectors = True
 
-areas = areas_2
+# areas = areas_1
+# areas = areas_2
+# areas = areas_basic
+areas = areas_overlay
 
 snow_sectors = []
 
@@ -161,6 +164,21 @@ def draw_edges(edges_list):
         )
 
 
+def draw_tsp(tsp_list):
+    n = len(tsp_list)
+    for i in range(0, n - 1):
+        color_value = int((i / (n - 1)) * 255)
+        # Make the red intensity go from 255 to 0
+        color = (255 - color_value, 0, color_value)
+        pygame.draw.line(
+            screen,
+            color,
+            (tsp_list[i][0] * scale, tsp_list[i][1] * scale),
+            (tsp_list[i + 1][0] * scale, tsp_list[i + 1][1] * scale),
+            width=3,
+        )
+
+
 def generate_edges():
     cols = defaultdict(list)
     rows = defaultdict(list)
@@ -192,6 +210,24 @@ def generate_edges():
     return edges
 
 
+def snow_sectors_to_coords():
+    coords = []
+    for sector in snow_sectors:
+        coords.append((sector.coords[0], sector.coords[1]))
+    print("COORDS: ", coords)
+    return coords
+
+
+def find_path_v1(edges):
+    G = nx.Graph()
+    coords = snow_sectors_to_coords()
+    G.add_nodes_from(coords)
+    G.add_edges_from(edges)
+
+    tsp_path = nx.approximation.traveling_salesman_problem(G, cycle=True)
+    return tsp_path
+
+
 def main():
     global snow_sectors
     clock = pygame.time.Clock()
@@ -199,6 +235,8 @@ def main():
 
     split_to_sectors()
     edges = generate_edges()
+    tsp_path = find_path_v1(edges)
+    print(tsp_path)
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -216,6 +254,7 @@ def main():
         draw_snow_sectors()
         # draw_lines()
         draw_edges(edges)
+        draw_tsp(tsp_path)
 
         pygame.display.flip()
         clock.tick(60)

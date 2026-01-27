@@ -179,6 +179,11 @@ def draw_tsp(tsp_list):
         )
 
 
+def animate_path(tick, path, tsp_path_walked):
+    pygame.draw.circle(screen, BLACK, (path[tick][0] * scale, path[tick][1] * scale), 5)
+    tsp_path_walked.append(path[tick])
+
+
 def generate_edges():
     cols = defaultdict(list)
     rows = defaultdict(list)
@@ -232,11 +237,13 @@ def main():
     global snow_sectors
     clock = pygame.time.Clock()
     running = True
-
+    animate = False
+    tick = 0
     split_to_sectors()
     edges = generate_edges()
     tsp_path = find_path_v1(edges)
-    print(tsp_path)
+    animation_length = len(tsp_path)
+    tsp_path_walked = []
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -244,7 +251,7 @@ def main():
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if button_rect.collidepoint(event.pos):
-                    snow_sectors = sort_by_nearest(snow_sectors)
+                    animate = True
 
         screen.fill(DARK_GRAY)
         pygame.draw.rect(screen, BLUE, button_rect)
@@ -254,10 +261,16 @@ def main():
         draw_snow_sectors()
         # draw_lines()
         draw_edges(edges)
-        draw_tsp(tsp_path)
+        # draw_tsp(tsp_path)
+        draw_tsp(tsp_path_walked)
+        if animate:
+            animate_path(tick, tsp_path, tsp_path_walked)
+            tick += 1
 
+        if tick == animation_length:
+            animate = False
         pygame.display.flip()
-        clock.tick(60)
+        clock.tick(10)
 
     pygame.quit()
     sys.exit()

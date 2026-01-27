@@ -252,10 +252,12 @@ def main():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if button_rect.collidepoint(event.pos):
                     animate = True
+                    tick = 0
+                    tsp_path_walked = []
 
         screen.fill(DARK_GRAY)
         pygame.draw.rect(screen, BLUE, button_rect)
-        text = font.render("split", True, WHITE)
+        text = font.render("animate", True, WHITE)
         screen.blit(text, (button_rect.x + 25, button_rect.y + 10))
         draw_areas()
         draw_snow_sectors()

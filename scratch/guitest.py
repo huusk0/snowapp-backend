@@ -42,10 +42,10 @@ button_rect = pygame.Rect(SCREEN_WIDTH // 2 - 50, SCREEN_HEIGHT - 60, 100, 40)
 prev_pos = []
 show_sectors = True
 
-# areas = areas_1
+areas = areas_1
 # areas = areas_2
 # areas = areas_basic
-areas = areas_overlay
+# areas = areas_overlay
 
 snow_sectors = []
 
@@ -229,7 +229,7 @@ def find_path_v1(edges):
     G.add_nodes_from(coords)
     G.add_edges_from(edges)
 
-    tsp_path = nx.approximation.traveling_salesman_problem(G, cycle=True)
+    tsp_path = nx.approximation.traveling_salesman_problem(G, cycle=False)
     return tsp_path
 
 
@@ -279,5 +279,5 @@ def main():
 
 
 if __name__ == "__main__":
-    print("Starting Disc Golf Simulator...")
+    print("Simulator...")
     main()

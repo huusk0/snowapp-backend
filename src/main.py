@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .models.rectangle import RectangleIn, RectangleEdges
-from ..logic.rectModel import Rectangle, GeometryService
+from .logic.rectModel import Rectangle, GeometryService
 
 app = FastAPI()
 solver = GeometryService()

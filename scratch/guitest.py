@@ -7,6 +7,7 @@ from snowSector import SnowSector
 from testAreaMaps import areas_1, areas_2, areas_basic, areas_overlay
 from collections import defaultdict
 import networkx as nx
+from functions import split_to_sectors
 
 pygame.init()
 
@@ -77,40 +78,40 @@ def draw_snow_sectors():
         )
 
 
-def split_to_sectors():
-    for area in areas:
-        for i in range(0, math.floor(area.width / kola_width)):
-            for j in range(0, math.floor(area.height / kola_height)):
-                snow_sector = SnowSector(
-                    (
-                        area.coords[0] - kola_width // 2 + kola_width * (i + 1),
-                        area.coords[1] - kola_height // 2 + kola_height * (j + 1),
-                    ),
-                    area.height * area.width * area.snow_depth,
-                    "GREEN",
-                )
-                snow_sectors.append(snow_sector)
-            if area.height - (j + 1) * kola_height > 0:
-                snow_sector = SnowSector(
-                    (
-                        area.coords[0] - kola_width // 2 + kola_width * (i + 1),
-                        area.coords[1] - kola_height // 2 + kola_height * (j + 2),
-                    ),
-                    area.height * area.width * area.snow_depth,
-                    "RED",
-                )
-                snow_sectors.append(snow_sector)
-        if area.width - (i + 1) * kola_width > 0:
-            for j in range(0, math.floor(area.height / kola_height)):
-                snow_sector = SnowSector(
-                    (
-                        area.coords[0] - kola_width // 2 + kola_width * (i + 2),
-                        area.coords[1] - kola_height // 2 + kola_height * (j + 1),
-                    ),
-                    area.height * area.width * area.snow_depth,
-                    "RED",
-                )
-                snow_sectors.append(snow_sector)
+# def split_to_sectors():
+#     for area in areas:
+#         for i in range(0, math.floor(area.width / kola_width)):
+#             for j in range(0, math.floor(area.height / kola_height)):
+#                 snow_sector = SnowSector(
+#                     (
+#                         area.coords[0] - kola_width // 2 + kola_width * (i + 1),
+#                         area.coords[1] - kola_height // 2 + kola_height * (j + 1),
+#                     ),
+#                     area.height * area.width * area.snow_depth,
+#                     "GREEN",
+#                 )
+#                 snow_sectors.append(snow_sector)
+#             if area.height - (j + 1) * kola_height > 0:
+#                 snow_sector = SnowSector(
+#                     (
+#                         area.coords[0] - kola_width // 2 + kola_width * (i + 1),
+#                         area.coords[1] - kola_height // 2 + kola_height * (j + 2),
+#                     ),
+#                     area.height * area.width * area.snow_depth,
+#                     "RED",
+#                 )
+#                 snow_sectors.append(snow_sector)
+#         if area.width - (i + 1) * kola_width > 0:
+#             for j in range(0, math.floor(area.height / kola_height)):
+#                 snow_sector = SnowSector(
+#                     (
+#                         area.coords[0] - kola_width // 2 + kola_width * (i + 2),
+#                         area.coords[1] - kola_height // 2 + kola_height * (j + 1),
+#                     ),
+#                     area.height * area.width * area.snow_depth,
+#                     "RED",
+#                 )
+#                 snow_sectors.append(snow_sector)
 
 
 def draw_lines():
@@ -239,7 +240,7 @@ def main():
     running = True
     animate = False
     tick = 0
-    split_to_sectors()
+    snow_sectors = split_to_sectors(areas, kola_width, kola_height)
     edges = generate_edges()
     tsp_path = find_path_v1(edges)
     animation_length = len(tsp_path)

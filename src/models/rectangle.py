@@ -18,3 +18,10 @@ class RectangleEdges(BaseModel):
     topright: Point
     bottomleft: Point
     bottomright: Point
+
+
+class SnowSectorOut(BaseModel):
+    coords: Point
+    snow_load: int
+    color: str
+    dump_site: bool

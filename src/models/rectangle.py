@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class Point(BaseModel):
@@ -9,8 +9,8 @@ class Point(BaseModel):
 class RectangleIn(BaseModel):
     x: int
     y: int
-    width: int
-    height: int
+    width: int = Field(gt=0)
+    height: int = Field(gt=0)
 
 
 class RectangleEdges(BaseModel):

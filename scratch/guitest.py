@@ -55,7 +55,7 @@ def draw_areas():
     for area in areas:
         pygame.draw.rect(
             screen,
-            LIGHT_GRAY,
+            WHITE,
             (
                 area.coords[0] * scale,
                 area.coords[1] * scale,
@@ -76,42 +76,6 @@ def draw_snow_sectors():
             ),
             scale,
         )
-
-
-# def split_to_sectors():
-#     for area in areas:
-#         for i in range(0, math.floor(area.width / kola_width)):
-#             for j in range(0, math.floor(area.height / kola_height)):
-#                 snow_sector = SnowSector(
-#                     (
-#                         area.coords[0] - kola_width // 2 + kola_width * (i + 1),
-#                         area.coords[1] - kola_height // 2 + kola_height * (j + 1),
-#                     ),
-#                     area.height * area.width * area.snow_depth,
-#                     "GREEN",
-#                 )
-#                 snow_sectors.append(snow_sector)
-#             if area.height - (j + 1) * kola_height > 0:
-#                 snow_sector = SnowSector(
-#                     (
-#                         area.coords[0] - kola_width // 2 + kola_width * (i + 1),
-#                         area.coords[1] - kola_height // 2 + kola_height * (j + 2),
-#                     ),
-#                     area.height * area.width * area.snow_depth,
-#                     "RED",
-#                 )
-#                 snow_sectors.append(snow_sector)
-#         if area.width - (i + 1) * kola_width > 0:
-#             for j in range(0, math.floor(area.height / kola_height)):
-#                 snow_sector = SnowSector(
-#                     (
-#                         area.coords[0] - kola_width // 2 + kola_width * (i + 2),
-#                         area.coords[1] - kola_height // 2 + kola_height * (j + 1),
-#                     ),
-#                     area.height * area.width * area.snow_depth,
-#                     "RED",
-#                 )
-#                 snow_sectors.append(snow_sector)
 
 
 def draw_lines():
@@ -169,8 +133,17 @@ def draw_tsp(tsp_list):
     n = len(tsp_list)
     for i in range(0, n - 1):
         color_value = int((i / (n - 1)) * 255)
-        # Make the red intensity go from 255 to 0
         color = (255 - color_value, 0, color_value)
+        pygame.draw.rect(
+            screen,
+            LIGHT_GRAY,
+            (
+                (tsp_list[i][0] - kola_width // 2) * scale,
+                (tsp_list[i][1] - kola_height // 2) * scale,
+                kola_width * scale,
+                kola_height * scale,
+            ),
+        )
         pygame.draw.line(
             screen,
             color,

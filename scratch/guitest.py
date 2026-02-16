@@ -229,8 +229,12 @@ def find_path_v1(edges):
     coords = snow_sectors_to_coords()
     G.add_nodes_from(coords)
     G.add_edges_from(edges)
+    tsp_path = nx.approximation.traveling_salesman_problem(G, cycle=True)
+    start_node = coords[0]
+    if start_node in tsp_path:
+        idx = tsp_path.index(start_node)
+        tsp_path = tsp_path[idx:] + tsp_path[:idx]
 
-    tsp_path = nx.approximation.traveling_salesman_problem(G, cycle=False)
     return tsp_path
 
 
@@ -263,7 +267,7 @@ def main():
         draw_areas()
         draw_snow_sectors()
         # draw_lines()
-        draw_edges(edges)
+        # draw_edges(edges)
         # draw_tsp(tsp_path)
         draw_tsp(tsp_path_walked)
         if animate:

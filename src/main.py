@@ -51,11 +51,11 @@ def calculate_snowsectors(rectangles: list[RectangleIn]) -> list[SnowSectorOut]:
     ]
 
 
-# @app.post("/api/snowsectors/")
-# def calculate_snowsectors(rectangles: list[RectangleIn]):
-#     rectangles_list = []
-#     for rect in rectangles:
-#         r = Rectangle(**rect.model_dump())
-#         rectangles_list.append(r)
-#     snow_sectors = solver.split_to_sectors(rectangles_list)
-#     return snow_sectors
+@app.post("/api/tsp0/", response_model=list[Point])
+def calculate_tsp_path(rectangles: list[RectangleIn]) -> list[Point]:
+    rectangles_list = []
+    for rect in rectangles:
+        r = Rectangle(**rect.model_dump())
+        rectangles_list.append(r)
+    tsp_path = solver.find_path_v0(rectangles_list)
+    return [Point(x=p[0], y=p[1]) for p in tsp_path]

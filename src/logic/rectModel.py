@@ -97,7 +97,6 @@ class GeometryService:
         coords = []
         for sector in snow_sectors:
             coords.append((sector.coords[0], sector.coords[1]))
-        print("COORDS: ", coords)
         return coords
 
     def generate_edges(

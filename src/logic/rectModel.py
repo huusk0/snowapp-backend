@@ -142,6 +142,8 @@ class GeometryService:
         kola_height: int = 10,
     ) -> list[tuple[int, int]]:
         snow_sectors = self.split_to_sectors(areas)
+        if len(snow_sectors) >= 500:
+            return []
         coords = self.snow_sectors_to_coords(snow_sectors)
         edges = self.generate_edges(snow_sectors)
         G = nx.Graph()

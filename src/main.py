@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from .models.rectangle import RectangleIn, RectangleEdges, SnowSectorOut, Point
@@ -58,4 +58,6 @@ def calculate_tsp_path(rectangles: list[RectangleIn]) -> list[Point]:
         r = Rectangle(**rect.model_dump())
         rectangles_list.append(r)
     tsp_path = solver.find_path_v0(rectangles_list)
+    if tsp_path == []:
+        raise HTTPException(status_code=501, detail="too many nodes")
     return [Point(x=p[0], y=p[1]) for p in tsp_path]

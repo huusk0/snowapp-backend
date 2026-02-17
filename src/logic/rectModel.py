@@ -138,7 +138,7 @@ class GeometryService:
     def find_path_v0(
         self,
         areas: list[Rectangle],
-        start_node: tuple[int, int] | None,
+        start_node: tuple[int, int] | None = None,
         kola_width: int = 10,
         kola_height: int = 10,
     ) -> list[tuple[int, int]]:

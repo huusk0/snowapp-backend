@@ -24,7 +24,7 @@ scale = 3
 kola_width = 10
 kola_height = 10
 kola_capacity = 100
-
+snow_in_kola = 0
 # Colors
 WHITE = (255, 255, 255)
 GRAY = (200, 200, 200)
@@ -75,6 +75,10 @@ def draw_snow_sectors():
                 sector.coords[1] * scale,
             ),
             scale,
+        )
+        text = font.render(str(sector.snow_load), True, BLACK)
+        screen.blit(
+            text, ((sector.coords[0] - 5) * scale, (sector.coords[1] - 2) * scale)
         )
 
 
@@ -153,9 +157,14 @@ def draw_tsp(tsp_list):
         )
 
 
-def animate_path(tick, path, tsp_path_walked):
+def animate_path(tick, path, tsp_path_walked, sector_map):
+    global snow_in_kola
     pygame.draw.circle(screen, BLACK, (path[tick][0] * scale, path[tick][1] * scale), 5)
     tsp_path_walked.append(path[tick])
+    sector = sector_map.get((path[tick][0], path[tick][1]))
+    if sector:
+        snow_in_kola += sector.snow_load
+        sector.snow_load = 0
 
 
 def generate_edges():
@@ -212,12 +221,13 @@ def find_path_v1(edges):
 
 
 def main():
-    global snow_sectors
+    global snow_sectors, snow_in_kola
     clock = pygame.time.Clock()
     running = True
     animate = False
     tick = 0
     snow_sectors = split_to_sectors(areas, kola_width, kola_height)
+    sector_map = {(s.coords[0], s.coords[1]): s for s in snow_sectors}
     edges = generate_edges()
     tsp_path = find_path_v1(edges)
     animation_length = len(tsp_path)
@@ -237,14 +247,16 @@ def main():
         pygame.draw.rect(screen, BLUE, button_rect)
         text = font.render("animate", True, WHITE)
         screen.blit(text, (button_rect.x + 25, button_rect.y + 10))
+        text = font.render(str(snow_in_kola), True, WHITE)
+        screen.blit(text, (button_rect.x - 25, button_rect.y + 10))
         draw_areas()
         draw_snow_sectors()
         # draw_lines()
         # draw_edges(edges)
         # draw_tsp(tsp_path)
-        draw_tsp(tsp_path_walked)
+        # draw_tsp(tsp_path_walked)
         if animate:
-            animate_path(tick, tsp_path, tsp_path_walked)
+            animate_path(tick, tsp_path, tsp_path_walked, sector_map)
             tick += 1
 
         if tick == animation_length:

@@ -22,7 +22,7 @@ def split_to_sectors(
                         area.coords[0] - kola_width // 2 + kola_width * (i + 1),
                         area.coords[1] - kola_height // 2 + kola_height * (j + 1),
                     ),
-                    area.height * area.width * area.snow_depth,
+                    area.snow_depth,
                     "GREEN",
                 )
                 snow_sectors.append(snow_sector)
@@ -32,7 +32,7 @@ def split_to_sectors(
                         area.coords[0] - kola_width // 2 + kola_width * (i + 1),
                         area.coords[1] - kola_height // 2 + kola_height * (j + 2),
                     ),
-                    area.height * area.width * area.snow_depth,
+                    area.snow_depth,
                     "RED",
                 )
                 snow_sectors.append(snow_sector)
@@ -43,7 +43,7 @@ def split_to_sectors(
                         area.coords[0] - kola_width // 2 + kola_width * (i + 2),
                         area.coords[1] - kola_height // 2 + kola_height * (j + 1),
                     ),
-                    area.height * area.width * area.snow_depth,
+                    area.snow_depth,
                     "RED",
                 )
                 snow_sectors.append(snow_sector)

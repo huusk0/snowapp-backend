@@ -38,3 +38,21 @@ class TestEdgePoints:
             },
         }
         assert geometry_service.calculate_edge_points(rectangle) == expected_output
+
+    def test_calculating_edges_should_return_edge_points_with_0_height(
+        self, geometry_service
+    ):
+        rect = Rectangle(x=10, y=10, width=5, height=0)
+        result = geometry_service.calculate_edge_points(rect)
+
+        assert result["topleft"] == {"x": 10, "y": 10}
+        assert result["bottomright"] == {"x": 15, "y": 10}
+
+    def test_calculating_edges_should_return_edge_points_with_0_width(
+        self, geometry_service
+    ):
+        rect = Rectangle(x=10, y=10, width=0, height=5)
+        result = geometry_service.calculate_edge_points(rect)
+
+        assert result["topleft"] == {"x": 10, "y": 10}
+        assert result["bottomright"] == {"x": 10, "y": 15}

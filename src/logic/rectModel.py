@@ -143,6 +143,8 @@ class GeometryService:
         kola_width: int = 10,
         kola_height: int = 10,
     ) -> list[tuple[int, int]]:
+        if len(areas) > 1:
+            return []
         snow_sectors = self.split_to_sectors(areas)
         if len(snow_sectors) >= 500:
             return []

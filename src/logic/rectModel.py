@@ -23,9 +23,9 @@ class SnowSector:
 
 
 class GeometryService:
-    def calculate_edge_points(self, rectangle: Rectangle):
-        if len(rectangle) < 1:
-            return []
+    def calculate_edge_points(self, rectangle: Rectangle | None):
+        if rectangle is None:
+            return {}
         return {
             "topleft": {"x": rectangle.x, "y": rectangle.y},
             "topright": {"x": rectangle.x + rectangle.width, "y": rectangle.y},

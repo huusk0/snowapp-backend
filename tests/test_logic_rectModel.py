@@ -1,12 +1,40 @@
 import pytest
-from src.logic.rectModel import GeometryService
+from src.logic.rectModel import GeometryService, Rectangle
 
 
-@pytest.fixture
-def geometry_service():
-    return GeometryService()
+class TestEdgePoints:
+    @pytest.fixture
+    def geometry_service(self):
+        return GeometryService()
 
+    def test_calculating_edges_should_return_empty_on_None_input(
+        self, geometry_service
+    ):
+        assert geometry_service.calculate_edge_points(None) == {}
 
-def test_zero_input(geometry_service):
-    rects = []
-    assert geometry_service.calculate_edge_points(rects) == []
+    @pytest.mark.parametrize(
+        "rectangle, expected",
+        [
+            (
+                Rectangle(x=0, y=0, width=1, height=1),
+                {"x1": 0, "y1": 0, "x2": 1, "y2": 1},
+            ),
+            (
+                Rectangle(x=10, y=20, width=5, height=5),
+                {"x1": 10, "y1": 20, "x2": 15, "y2": 25},
+            ),
+        ],
+    )
+    def test_calculating_edges_should_return_correct_edge_points(
+        self, geometry_service, rectangle, expected
+    ):
+        expected_output = {
+            "topleft": {"x": expected["x1"], "y": expected["y1"]},
+            "topright": {"x": expected["x2"], "y": expected["y1"]},
+            "bottomleft": {"x": expected["x1"], "y": expected["y2"]},
+            "bottomright": {
+                "x": expected["x2"],
+                "y": expected["y2"],
+            },
+        }
+        assert geometry_service.calculate_edge_points(rectangle) == expected_output
